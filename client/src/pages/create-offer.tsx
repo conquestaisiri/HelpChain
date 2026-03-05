@@ -23,7 +23,7 @@ import { motion } from "framer-motion";
 
 export default function CreateOfferPage() {
   const [, setLocation] = useLocation();
-  const { balance, deposit } = useWallet();
+  const { balance, initializeDeposit } = useWallet();
   const { createOffer } = useOffers();
 
   const [formData, setFormData] = useState({
