@@ -120,6 +120,9 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
               </motion.div>
             </Link>
 
+            {/* Sector Toggle */}
+            <SectorToggle shouldBeTransparent={shouldBeTransparent} />
+
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
