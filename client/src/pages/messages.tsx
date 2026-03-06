@@ -222,7 +222,7 @@ export default function MessagesPage() {
               className="flex flex-col h-full bg-card"
             >
               {/* Chat Header */}
-              <div className="flex items-center gap-3 px-4 py-3 border-b bg-white dark:bg-zinc-900 sticky top-0 z-10">
+              <div className="flex items-center gap-3 px-4 py-3 border-b bg-card sticky top-0 z-10">
                 <Button
                   variant="ghost"
                   size="icon"
