@@ -166,7 +166,7 @@ export default function AuthPage() {
                   <div className="space-y-3">
                     <Button 
                       variant="outline" 
-                      className="w-full h-12 gap-3 font-medium border-2 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+                      className="w-full h-12 gap-3 font-medium border-2 hover:bg-muted transition-all"
                       onClick={handleGoogleSignIn}
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -184,7 +184,7 @@ export default function AuthPage() {
                       <Separator className="w-full" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white dark:bg-slate-950 px-2 text-muted-foreground">
+                      <span className="bg-card px-2 text-muted-foreground">
                         Or continue with email
                       </span>
                     </div>
