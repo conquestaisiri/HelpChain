@@ -154,7 +154,7 @@ export default function MessagesPage() {
                     placeholder="Search conversations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-white dark:bg-zinc-900 border-0 shadow-sm"
+                    className="pl-10 bg-card border-0 shadow-sm"
                   />
                 </div>
               </div>
