@@ -286,7 +286,7 @@ export default function MessagesPage() {
               {/* Message Input */}
               <form 
                 onSubmit={handleSendMessage} 
-                className="p-4 bg-white dark:bg-zinc-900 border-t flex gap-2 sticky bottom-0"
+                className="p-4 bg-card border-t flex gap-2 sticky bottom-0"
               >
                 <Input
                   value={newMessage}
