@@ -132,7 +132,7 @@ export default function MessagesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
       <div className="max-w-lg mx-auto h-[calc(100vh-64px)] flex flex-col">
