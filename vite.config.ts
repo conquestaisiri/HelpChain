@@ -10,9 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  // Ensure the build output goes to a 'dist' folder inside 'client'
   build: {
-    outDir: "dist",
+    outDir: "dist", // This creates client/dist/
     emptyOutDir: true,
   },
 });
