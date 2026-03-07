@@ -10,7 +10,22 @@ import {
   Smartphone, Lock, Eye, ChevronRight
 } from "lucide-react";
 
-const settingSections = [
+interface SettingItem {
+  label: string;
+  description?: string;
+  href?: string;
+  toggle?: boolean;
+  defaultOn?: boolean;
+}
+
+interface SettingSection {
+  title: string;
+  description: string;
+  icon: typeof User;
+  items: SettingItem[];
+}
+
+const settingSections: SettingSection[] = [
   {
     title: "Account",
     description: "Manage your account details and preferences",
