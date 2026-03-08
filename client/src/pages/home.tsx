@@ -64,14 +64,14 @@ export default function Home() {
   };
 
   const categories = [
-    { label: "Home Services", icon: HomeIcon, desc: "Cleaning, repairs, moving, assembly", color: "from-blue-500 to-blue-600" },
-    { label: "Tech Help", icon: Code, desc: "Development, IT support, troubleshooting", color: "from-purple-500 to-purple-600" },
-    { label: "Design", icon: Palette, desc: "Graphics, UI/UX, branding, video", color: "from-pink-500 to-pink-600" },
-    { label: "Writing", icon: FileText, desc: "Content, copywriting, editing", color: "from-amber-500 to-amber-600" },
-    { label: "Delivery", icon: Truck, desc: "Packages, errands, logistics", color: "from-green-500 to-green-600" },
-    { label: "Education", icon: GraduationCap, desc: "Tutoring, homework, mentoring", color: "from-cyan-500 to-cyan-600" },
-    { label: "Marketing", icon: Megaphone, desc: "Social media, SEO, campaigns", color: "from-red-500 to-red-600" },
-    { label: "Translation", icon: Languages, desc: "Documents, websites, localization", color: "from-indigo-500 to-indigo-600" },
+    { label: "Home Services", icon: "/images/icons/home-services.png", desc: "Cleaning, repairs, moving, assembly" },
+    { label: "Tech Help", icon: "/images/icons/tech-help.png", desc: "Development, IT support, troubleshooting" },
+    { label: "Design", icon: "/images/icons/design.png", desc: "Graphics, UI/UX, branding, video" },
+    { label: "Writing", icon: "/images/icons/writing.png", desc: "Content, copywriting, editing" },
+    { label: "Delivery", icon: "/images/icons/delivery.png", desc: "Packages, errands, logistics" },
+    { label: "Education", icon: "/images/icons/education.png", desc: "Tutoring, homework, mentoring" },
+    { label: "Marketing", icon: "/images/icons/marketing.png", desc: "Social media, SEO, campaigns" },
+    { label: "Translation", icon: "/images/icons/translation.png", desc: "Documents, websites, localization" },
   ];
 
   const stats = [
