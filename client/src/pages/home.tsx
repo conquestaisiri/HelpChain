@@ -330,7 +330,7 @@ export default function Home() {
               <Users className="w-4 h-4 mr-2" />
               Workers Worldwide
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-5 text-foreground font-heading">Real people, real skills</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">Real people, real skills</h2>
             <p className="text-lg text-muted-foreground">
               From freelance designers to delivery pros — skilled workers from every corner of the globe.
             </p>
