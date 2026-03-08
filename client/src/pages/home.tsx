@@ -127,8 +127,8 @@ export default function Home() {
       <section className="relative min-h-[95vh] flex items-center overflow-hidden -mt-16">
         {/* Background image */}
         <div className="absolute inset-0">
-          <img src="/images/hero-workers.jpg" alt="Diverse professionals collaborating" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,80%,20%)]/90 via-[hsl(222,80%,30%)]/85 to-[hsl(270,60%,35%)]/80" />
+          <img src="/images/hero-background.png" alt="Diverse professionals collaborating" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/60 to-black/80" />
           {/* Decorative orbs */}
           <div className="absolute top-1/4 left-10 w-72 h-72 bg-accent/20 rounded-full blur-[100px] animate-pulse-slow" />
           <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] animate-pulse-slow" />
