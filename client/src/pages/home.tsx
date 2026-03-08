@@ -250,7 +250,7 @@ export default function Home() {
             <Badge className="mb-5 px-4 py-1.5 bg-primary/10 text-primary border-primary/20 rounded-full">
               Why HelpChain
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-5 text-foreground font-heading">
+             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
               Everything you need to
               <br />
               <span className="text-gradient">get things done</span>
