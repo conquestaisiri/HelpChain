@@ -365,32 +365,36 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-muted/30 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-72 h-72 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full translate-x-1/3 translate-y-1/3" />
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <Badge className="mb-4 px-4 py-1.5 bg-chart-4/10 text-chart-4 border-chart-4/20 rounded-full">
-              <Star className="w-4 h-4 mr-2 fill-current" />
-              Testimonials
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Loved by thousands worldwide</h2>
-            <p className="text-lg text-muted-foreground">See what our global community says about HelpChain</p>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground">
+              What people are saying
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-lg mx-auto">
+              Real stories from clients and workers across the globe
+            </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {testimonials.map((t, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <Card className="h-full border-border hover:shadow-xl transition-shadow">
-                  <CardContent className="p-8">
-                    <div className="flex gap-1 mb-4">
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}>
+                <Card className="h-full border-0 shadow-xl bg-card hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden">
+                  <CardContent className="p-8 flex flex-col h-full">
+                    <div className="flex gap-1 mb-5">
                       {[...Array(t.rating)].map((_, j) => (
                         <Star key={j} className="w-5 h-5 fill-chart-4 text-chart-4" />
                       ))}
                     </div>
-                    <p className="text-foreground mb-6 leading-relaxed">"{t.content}"</p>
-                    <div className="flex items-center gap-4">
-                      <Avatar className="w-12 h-12">
+                    <p className="text-foreground mb-8 leading-relaxed text-[15px] flex-1">
+                      "{t.content}"
+                    </p>
+                    <div className="flex items-center gap-4 pt-6 border-t border-border">
+                      <Avatar className="w-12 h-12 ring-2 ring-primary/10">
                         <AvatarImage src={t.avatar} />
-                        <AvatarFallback>{t.name[0]}</AvatarFallback>
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold">{t.name[0]}</AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-semibold text-foreground">{t.name}</p>
@@ -406,24 +410,28 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-primary" />
+      <section className="relative py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
         <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to get started?
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+            <Sparkles className="w-10 h-10 text-primary-foreground/60 mx-auto mb-6" />
+            <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-5 leading-tight">
+              Start getting things done
+              <br />
+              <span className="text-primary-foreground/80">today</span>
             </h2>
-            <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-              Join thousands of people hiring help and earning money on HelpChain — from anywhere in the world.
+            <p className="text-lg text-primary-foreground/70 mb-10 max-w-lg mx-auto leading-relaxed">
+              Join a growing community of people hiring help and earning money — from anywhere in the world.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/create-request">
-                <Button size="lg" className="rounded-full px-8 bg-white text-primary hover:bg-white/90 shadow-lg">
+                <Button size="lg" className="rounded-full px-10 py-6 text-base bg-white text-primary hover:bg-white/90 shadow-2xl font-semibold">
                   Post a Task <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/discover">
-                <Button size="lg" variant="outline" className="rounded-full px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                <Button size="lg" variant="outline" className="rounded-full px-10 py-6 text-base border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold">
                   Browse Tasks
                 </Button>
               </Link>
