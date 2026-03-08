@@ -562,7 +562,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/create-request">
-                <Button size="lg" className="rounded-full px-12 py-7 text-lg bg-accent hover:bg-accent/90 text-accent-foreground shadow-2xl shadow-accent/30 font-semibold">
+                <Button size="lg" className="rounded-full px-12 py-7 text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 font-semibold">
                   Post a Task <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
