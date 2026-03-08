@@ -64,14 +64,14 @@ export default function Home() {
   };
 
   const categories = [
-    { label: "Home Services", icon: HomeIcon, desc: "Cleaning, repairs, moving, assembly", color: "from-blue-500 to-blue-600" },
-    { label: "Tech Help", icon: Code, desc: "Development, IT support, troubleshooting", color: "from-purple-500 to-purple-600" },
-    { label: "Design", icon: Palette, desc: "Graphics, UI/UX, branding, video", color: "from-pink-500 to-pink-600" },
-    { label: "Writing", icon: FileText, desc: "Content, copywriting, editing", color: "from-amber-500 to-amber-600" },
-    { label: "Delivery", icon: Truck, desc: "Packages, errands, logistics", color: "from-green-500 to-green-600" },
-    { label: "Education", icon: GraduationCap, desc: "Tutoring, homework, mentoring", color: "from-cyan-500 to-cyan-600" },
-    { label: "Marketing", icon: Megaphone, desc: "Social media, SEO, campaigns", color: "from-red-500 to-red-600" },
-    { label: "Translation", icon: Languages, desc: "Documents, websites, localization", color: "from-indigo-500 to-indigo-600" },
+    { label: "Home Services", icon: "/images/icons/home-services.png", desc: "Cleaning, repairs, moving, assembly" },
+    { label: "Tech Help", icon: "/images/icons/tech-help.png", desc: "Development, IT support, troubleshooting" },
+    { label: "Design", icon: "/images/icons/design.png", desc: "Graphics, UI/UX, branding, video" },
+    { label: "Writing", icon: "/images/icons/writing.png", desc: "Content, copywriting, editing" },
+    { label: "Delivery", icon: "/images/icons/delivery.png", desc: "Packages, errands, logistics" },
+    { label: "Education", icon: "/images/icons/education.png", desc: "Tutoring, homework, mentoring" },
+    { label: "Marketing", icon: "/images/icons/marketing.png", desc: "Social media, SEO, campaigns" },
+    { label: "Translation", icon: "/images/icons/translation.png", desc: "Documents, websites, localization" },
   ];
 
   const stats = [
@@ -142,7 +142,7 @@ export default function Home() {
                 Trusted by users in 120+ countries
               </Badge>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-8 font-heading">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-6 md:mb-8 font-heading">
                 Get Help With Anything.
                 <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-green-300 to-accent">
@@ -150,7 +150,7 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base md:text-xl text-white/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
                 Post tasks, hire trusted helpers, and get things done — from{" "}
                 <span className="text-white font-medium">
                   {typingText}
@@ -235,7 +235,7 @@ export default function Home() {
                 transition={{ delay: i * 0.1 }}
               >
                 <stat.icon className="w-8 h-8 text-primary mx-auto mb-3" />
-                <p className="text-3xl md:text-4xl font-bold text-foreground mb-1">{stat.value}</p>
+                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1">{stat.value}</p>
                 <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
               </motion.div>
             ))}
@@ -250,7 +250,7 @@ export default function Home() {
             <Badge className="mb-5 px-4 py-1.5 bg-primary/10 text-primary border-primary/20 rounded-full">
               Why HelpChain
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-5 text-foreground font-heading">
+             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
               Everything you need to
               <br />
               <span className="text-gradient">get things done</span>
@@ -282,7 +282,7 @@ export default function Home() {
       <section className="py-24 bg-muted/30 border-y border-border">
         <div className="container mx-auto px-4">
           <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-4xl md:text-5xl font-bold mb-5 text-foreground font-heading">
+             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
               Explore task categories
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -295,12 +295,15 @@ export default function Home() {
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
                 <Link href="/discover">
                   <Card className="group cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full rounded-2xl border-border overflow-hidden">
-                    <CardContent className="p-6">
-                      <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center mb-4 text-white shadow-lg group-hover:scale-110 transition-transform`}>
-                        <cat.icon className="h-6 w-6" />
-                      </div>
-                      <h3 className="font-bold text-foreground mb-1">{cat.label}</h3>
-                      <p className="text-sm text-muted-foreground">{cat.desc}</p>
+                    <CardContent className="p-5 md:p-6 text-center">
+                      <img
+                        src={cat.icon}
+                        alt={cat.label}
+                        className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 object-contain group-hover:scale-110 transition-transform"
+                        loading="lazy"
+                      />
+                      <h3 className="font-bold text-foreground mb-1 text-sm md:text-base">{cat.label}</h3>
+                      <p className="text-xs md:text-sm text-muted-foreground">{cat.desc}</p>
                     </CardContent>
                   </Card>
                 </Link>
@@ -327,7 +330,7 @@ export default function Home() {
               <Users className="w-4 h-4 mr-2" />
               Workers Worldwide
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-5 text-foreground font-heading">Real people, real skills</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">Real people, real skills</h2>
             <p className="text-lg text-muted-foreground">
               From freelance designers to delivery pros — skilled workers from every corner of the globe.
             </p>
@@ -384,7 +387,7 @@ export default function Home() {
             <Badge className="mb-5 px-4 py-1.5 bg-accent/10 text-accent border-accent/20 rounded-full">
               How It Works
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-5 text-foreground font-heading">
+             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
               Three simple steps
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -392,23 +395,23 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
             {[
-              { step: "01", title: "Post your task", desc: "Describe what you need, set your budget and deadline. It takes just 2 minutes.", icon: FileText, color: "from-primary to-primary/80" },
-              { step: "02", title: "Get matched", desc: "Receive proposals from verified workers worldwide. Compare skills, ratings, and prices.", icon: Users, color: "from-secondary to-secondary/80" },
-              { step: "03", title: "Pay securely", desc: "Funds are held in escrow until the task is completed to your satisfaction.", icon: Shield, color: "from-accent to-accent/80" },
+              { step: "01", title: "Post your task", desc: "Describe what you need, set your budget and deadline. It takes just 2 minutes.", icon: "/images/icons/post-task.png" },
+              { step: "02", title: "Get matched", desc: "Receive proposals from verified workers worldwide. Compare skills, ratings, and prices.", icon: "/images/icons/get-matched.png" },
+              { step: "03", title: "Pay securely", desc: "Funds are held in escrow until the task is completed to your satisfaction.", icon: "/images/icons/pay-secure.png" },
             ].map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}>
                 <div className="text-center relative">
                   {i < 2 && (
                     <div className="hidden md:block absolute top-16 left-[60%] w-[80%] border-t-2 border-dashed border-border" />
                   )}
-                  <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-6 text-white shadow-xl relative z-10`}>
-                    <item.icon className="w-9 h-9" />
+                  <div className="w-24 h-24 md:w-28 md:h-28 mx-auto mb-6 relative z-10">
+                    <img src={item.icon} alt={item.title} className="w-full h-full object-contain" loading="lazy" />
                   </div>
                   <span className="text-sm font-bold text-primary mb-2 block">Step {item.step}</span>
-                  <h3 className="font-bold text-xl mb-3 text-foreground">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">{item.desc}</p>
+                  <h3 className="font-bold text-lg md:text-xl mb-3 text-foreground">{item.title}</h3>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xs mx-auto">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -439,7 +442,7 @@ export default function Home() {
               <Badge className="mb-5 px-4 py-1.5 bg-secondary/10 text-secondary border-secondary/20 rounded-full">
                 Platform Preview
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground font-heading leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground font-heading leading-tight">
                 A beautiful interface
                 <br />
                 <span className="text-gradient">built for everyone</span>
@@ -504,7 +507,7 @@ export default function Home() {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/5 rounded-full translate-x-1/3 translate-y-1/3" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-4xl md:text-5xl font-bold mb-5 text-foreground font-heading">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
               What people are saying
             </h2>
             <p className="text-lg text-muted-foreground max-w-lg mx-auto">
@@ -545,14 +548,14 @@ export default function Home() {
 
       {/* ═══════════ CTA ═══════════ */}
       <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,80%,18%)] via-[hsl(222,70%,12%)] to-[hsl(222,60%,8%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(145,60%,14%)] via-[hsl(145,50%,10%)] to-[hsl(145,40%,6%)]" />
         <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px), radial-gradient(circle at 75% 75%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
         <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-accent/15 rounded-full blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/20 rounded-full blur-[80px]" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <Sparkles className="w-12 h-12 text-primary mx-auto mb-8" />
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight font-heading">
+            <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight font-heading">
               Start getting things done
               <br />
               <span className="text-white/70">today</span>
