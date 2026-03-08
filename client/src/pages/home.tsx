@@ -150,7 +150,7 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base md:text-xl text-white/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
                 Post tasks, hire trusted helpers, and get things done — from{" "}
                 <span className="text-white font-medium">
                   {typingText}
