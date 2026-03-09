@@ -14,6 +14,164 @@ export type Database = {
   }
   public: {
     Tables: {
+      deposits: {
+        Row: {
+          amount: number
+          completed_at: string | null
+          created_at: string
+          id: string
+          payment_method: string | null
+          paystack_reference: string | null
+          status: string
+          user_id: string
+          webhook_verified: boolean | null
+        }
+        Insert: {
+          amount: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          payment_method?: string | null
+          paystack_reference?: string | null
+          status?: string
+          user_id: string
+          webhook_verified?: boolean | null
+        }
+        Update: {
+          amount?: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          payment_method?: string | null
+          paystack_reference?: string | null
+          status?: string
+          user_id?: string
+          webhook_verified?: boolean | null
+        }
+        Relationships: []
+      }
+      escrow_records: {
+        Row: {
+          amount: number
+          dispute_id: string | null
+          helper_id: string | null
+          id: string
+          locked_at: string
+          platform_fee: number
+          released_at: string | null
+          released_to: string | null
+          requester_id: string
+          status: string
+          task_id: string
+        }
+        Insert: {
+          amount: number
+          dispute_id?: string | null
+          helper_id?: string | null
+          id?: string
+          locked_at?: string
+          platform_fee?: number
+          released_at?: string | null
+          released_to?: string | null
+          requester_id: string
+          status?: string
+          task_id: string
+        }
+        Update: {
+          amount?: number
+          dispute_id?: string | null
+          helper_id?: string | null
+          id?: string
+          locked_at?: string
+          platform_fee?: number
+          released_at?: string | null
+          released_to?: string | null
+          requester_id?: string
+          status?: string
+          task_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          related_entity_id: string | null
+          related_entity_type: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      offers: {
+        Row: {
+          created_at: string
+          helper_id: string
+          id: string
+          is_price_suggestion: boolean | null
+          message: string
+          offered_amount: number | null
+          responded_at: string | null
+          status: string
+          task_id: string
+        }
+        Insert: {
+          created_at?: string
+          helper_id: string
+          id?: string
+          is_price_suggestion?: boolean | null
+          message: string
+          offered_amount?: number | null
+          responded_at?: string | null
+          status?: string
+          task_id: string
+        }
+        Update: {
+          created_at?: string
+          helper_id?: string
+          id?: string
+          is_price_suggestion?: boolean | null
+          message?: string
+          offered_amount?: number | null
+          responded_at?: string | null
+          status?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -86,6 +244,171 @@ export type Database = {
           updated_at?: string
           user_id?: string
           verification_tier?: number | null
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_at: string | null
+          budget: number
+          category: string
+          completed_at: string | null
+          created_at: string
+          description: string
+          funded_from: string | null
+          helper_id: string | null
+          id: string
+          location: string | null
+          platform_fee: number
+          requester_id: string
+          status: string
+          title: string
+          urgency: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          budget: number
+          category: string
+          completed_at?: string | null
+          created_at?: string
+          description: string
+          funded_from?: string | null
+          helper_id?: string | null
+          id?: string
+          location?: string | null
+          platform_fee: number
+          requester_id: string
+          status?: string
+          title: string
+          urgency?: string
+        }
+        Update: {
+          assigned_at?: string | null
+          budget?: number
+          category?: string
+          completed_at?: string | null
+          created_at?: string
+          description?: string
+          funded_from?: string | null
+          helper_id?: string | null
+          id?: string
+          location?: string | null
+          platform_fee?: number
+          requester_id?: string
+          status?: string
+          title?: string
+          urgency?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          balance_before: number
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          reference: string | null
+          status: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          balance_before: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reference?: string | null
+          status?: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          balance_before?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reference?: string | null
+          status?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          available_balance: number
+          created_at: string
+          currency: string
+          escrow_balance: number
+          id: string
+          updated_at: string
+          user_id: string
+          wallet_status: string
+        }
+        Insert: {
+          available_balance?: number
+          created_at?: string
+          currency?: string
+          escrow_balance?: number
+          id?: string
+          updated_at?: string
+          user_id: string
+          wallet_status?: string
+        }
+        Update: {
+          available_balance?: number
+          created_at?: string
+          currency?: string
+          escrow_balance?: number
+          id?: string
+          updated_at?: string
+          user_id?: string
+          wallet_status?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          amount: number
+          bank_account_id: string | null
+          completed_at: string | null
+          created_at: string
+          failure_reason: string | null
+          id: string
+          paystack_reference: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          bank_account_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          paystack_reference?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          bank_account_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          paystack_reference?: string | null
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
