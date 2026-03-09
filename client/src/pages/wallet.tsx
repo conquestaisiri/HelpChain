@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Wallet, ArrowUpRight, ArrowDownLeft, Clock, CheckCircle, XCircle,
   TrendingUp, Shield, CircleDollarSign, Coins, Eye, EyeOff,
-  Download, Upload, Filter, CreditCard, Building, Globe, Loader2, ExternalLink, Link2
+  Download, Upload, Filter, CreditCard, Building, Globe, Loader2, ExternalLink, Link2, RefreshCw
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
