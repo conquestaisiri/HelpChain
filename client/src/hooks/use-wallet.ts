@@ -146,8 +146,8 @@ export function useWallet() {
     return verifyDepositMutation.mutateAsync(reference);
   };
 
-  const withdraw = async (amount: number, bankAccountId?: string, walletAddress?: string) => {
-    return withdrawMutation.mutateAsync({ amount, bankAccountId, walletAddress });
+  const withdraw = async (amount: number, bankCode?: string, accountNumber?: string, accountName?: string, walletAddress?: string) => {
+    return withdrawMutation.mutateAsync({ amount, bankCode, accountNumber, accountName, walletAddress });
   };
 
   const isWithdrawalLocked = () => {
