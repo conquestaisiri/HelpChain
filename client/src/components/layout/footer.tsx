@@ -1,5 +1,6 @@
 import { Twitter, Facebook, Instagram, Linkedin, Mail, Globe, Shield, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { HelpChainLogo } from "@/components/ui/helpchain-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 

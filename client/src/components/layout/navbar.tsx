@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { HelpChainLogo } from "@/components/ui/helpchain-logo";
 import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import { useMobileMenu } from "@/contexts/mobile-menu-context";
 import { Button } from "@/components/ui/button";
