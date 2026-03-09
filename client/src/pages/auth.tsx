@@ -19,6 +19,7 @@ export default function AuthPage() {
   const initialMode = new URLSearchParams(search).get("mode") || "login";
   
   const { user, signIn, signUp, signInWithGoogle, resetPassword, loading } = useFirebaseAuth();
+  const { sendWelcomeNotification } = useNotifications();
   const { toast } = useToast();
   
   const [mode, setMode] = useState<"login" | "signup" | "reset">(
