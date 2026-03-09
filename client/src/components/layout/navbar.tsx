@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { HelpChainLogo } from "@/components/ui/helpchain-logo";
 import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import { useMobileMenu } from "@/contexts/mobile-menu-context";
 import { Button } from "@/components/ui/button";
@@ -150,7 +151,7 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <img src="/images/helpchain-logo.png" alt="HelpChain" className="h-9 w-9 rounded-lg object-contain" />
+                <HelpChainLogo size="md" className="rounded-lg" />
                 <span className={cn(
                   "text-lg font-bold tracking-tight transition-colors duration-300",
                   shouldBeTransparent ? "text-white" : "text-foreground"
@@ -395,7 +396,7 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
                   {/* Header */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <img src="/images/helpchain-logo.png" alt="HelpChain" className="h-9 w-9 rounded-xl object-contain" />
+                      <HelpChainLogo size="md" className="rounded-xl" />
                       <span className="text-lg font-bold text-foreground">HelpChain</span>
                     </div>
                     <Button 

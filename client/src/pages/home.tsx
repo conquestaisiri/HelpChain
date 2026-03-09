@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/layout/navbar";
+import { HelpChainLogo } from "@/components/ui/helpchain-logo";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -135,7 +136,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center">
             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
               <Badge className="mb-8 px-5 py-2 bg-white/10 text-white border-white/20 rounded-full text-sm backdrop-blur-sm">
-                <Sparkles className="w-4 h-4 mr-2 text-accent" />
+                <HelpChainLogo size="sm" className="mr-2" />
                 Secure & Verified Helper Community
               </Badge>
 
@@ -551,7 +552,7 @@ export default function Home() {
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/20 rounded-full blur-[80px]" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <Sparkles className="w-12 h-12 text-primary mx-auto mb-8" />
+            <HelpChainLogo size="xl" className="mx-auto mb-8" />
             <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight font-heading">
               Start getting things done
               <br />
