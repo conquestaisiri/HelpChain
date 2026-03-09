@@ -136,7 +136,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center">
             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
               <Badge className="mb-8 px-5 py-2 bg-white/10 text-white border-white/20 rounded-full text-sm backdrop-blur-sm">
-                <Sparkles className="w-4 h-4 mr-2 text-accent" />
+                <HelpChainLogo size="sm" className="mr-2" />
                 Secure & Verified Helper Community
               </Badge>
 

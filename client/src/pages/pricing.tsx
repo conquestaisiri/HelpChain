@@ -61,7 +61,7 @@ export default function PricingPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <Badge className="mb-6 px-4 py-2 bg-white/20 text-white border-white/30 rounded-full">
-              <Sparkles className="w-4 h-4 mr-2" />
+              <HelpChainLogo size="sm" className="mr-2" />
               Simple Pricing
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
