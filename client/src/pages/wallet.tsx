@@ -321,7 +321,16 @@ function WalletPageContent() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Coins size={16} /> Asset Breakdown</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Coins size={16} /> Asset Breakdown</CardTitle>
+                <button
+                  onClick={refreshPrices}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  title="Refresh prices"
+                >
+                  <RefreshCw size={14} className={pricesLoading ? "animate-spin" : ""} />
+                </button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {showAssets ? (
@@ -331,17 +340,30 @@ function WalletPageContent() {
                     <span className="text-sm font-semibold">{formatLocal(availableBalance)}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">USDC (equiv.)</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm text-muted-foreground">USDC</span>
+                      <span className="text-[10px] text-muted-foreground/60">1 USDC = ₦{usdcNgn.toLocaleString()}</span>
+                    </div>
                     <span className="text-sm font-semibold">${usdcEquivalent}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">SOL</span>
-                    <span className="text-sm font-semibold text-muted-foreground">0.00</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm text-muted-foreground">SOL</span>
+                      <span className="text-[10px] text-muted-foreground/60">1 SOL = ₦{solNgn.toLocaleString()}</span>
+                    </div>
+                    <span className="text-sm font-semibold">{solEquivalent}</span>
                   </div>
                   <div className="h-px bg-border my-2" />
-                  <p className="text-xs text-muted-foreground">
-                    USDC is the internal unit of account. Fiat values are displayed for convenience.
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">
+                      Live rates · Auto-refreshes every 30s
+                    </p>
+                    {lastUpdated && (
+                      <p className="text-[10px] text-muted-foreground/60">
+                        {lastUpdated.toLocaleTimeString()}
+                      </p>
+                    )}
+                  </div>
                 </>
               ) : (
                 <div className="text-center py-4">
