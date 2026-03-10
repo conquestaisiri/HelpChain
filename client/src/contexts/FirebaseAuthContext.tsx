@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  signInWithCredential,
+  signInWithPopup,
   GoogleAuthProvider,
   sendPasswordResetEmail,
   sendEmailVerification,
