@@ -35,7 +35,8 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (user) {
-      setLocation("/profile");
+      const onboardingDone = localStorage.getItem("hc-onboarding-done");
+      setLocation(onboardingDone ? "/profile" : "/onboarding");
     }
   }, [user, setLocation]);
 
@@ -75,9 +76,9 @@ export default function AuthPage() {
         setTimeout(() => sendWelcomeNotification(displayName), 2000);
         toast({
           title: "Account created! 🎉",
-          description: "Welcome to HelpChain! Please check your email to verify your account.",
+          description: "Welcome to HelpChain! Let's set up your profile.",
         });
-        setLocation("/profile");
+        setLocation("/onboarding");
       } else if (mode === "reset") {
         await resetPassword(email);
         toast({
@@ -108,14 +109,16 @@ export default function AuthPage() {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      // Send welcome notification for first-time Google sign-in
+      // Check if first-time user (no onboarding done)
+      const onboardingDone = localStorage.getItem("hc-onboarding-done");
       setTimeout(() => sendWelcomeNotification(user?.displayName || undefined), 2000);
       toast({
         title: "Welcome!",
         description: "You have successfully signed in with Google.",
       });
-      setLocation("/profile");
+      setLocation(onboardingDone ? "/profile" : "/onboarding");
     } catch (error: any) {
+      if (error?.message?.includes("cancelled") || error?.code === "auth/popup-closed-by-user") return;
       toast({
         title: "Error",
         description: error.message || "Failed to sign in with Google",

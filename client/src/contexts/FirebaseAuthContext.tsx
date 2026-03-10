@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  signInWithCredential,
+  signInWithPopup,
   GoogleAuthProvider,
   sendPasswordResetEmail,
   sendEmailVerification,
@@ -128,69 +128,20 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async () => {
     setError(null);
-    const firebaseAuth = checkAuth();
-    
-    return new Promise<void>((resolve, reject) => {
-      const gis = window.google;
-      if (!gis?.accounts) {
-        const err = new Error("Google Sign-In is loading. Please wait a moment and try again.");
-        setError(err.message);
-        reject(err);
+    try {
+      const firebaseAuth = checkAuth();
+      const provider = new GoogleAuthProvider();
+      provider.addScope('email');
+      provider.addScope('profile');
+      await signInWithPopup(firebaseAuth, provider);
+    } catch (err: any) {
+      // Don't set error for popup closed by user
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         return;
       }
-      
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
-      if (!clientId) {
-        const err = new Error("Google Sign-In is not configured. Please use email/password.");
-        setError(err.message);
-        reject(err);
-        return;
-      }
-      
-      const buttonContainer = document.createElement('div');
-      buttonContainer.id = 'google-signin-temp';
-      buttonContainer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10000;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
-      
-      const overlay = document.createElement('div');
-      overlay.id = 'google-signin-overlay';
-      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999';
-      overlay.onclick = () => { cleanup(); reject(new Error('Sign-in cancelled')); };
-      
-      document.body.appendChild(overlay);
-      document.body.appendChild(buttonContainer);
-      
-      const cleanup = () => {
-        document.getElementById('google-signin-temp')?.remove();
-        document.getElementById('google-signin-overlay')?.remove();
-      };
-      
-      gis.accounts.id.initialize({
-        client_id: clientId,
-        callback: async (response: { credential: string }) => {
-          try {
-            cleanup();
-            const credential = GoogleAuthProvider.credential(response.credential);
-            await signInWithCredential(firebaseAuth, credential);
-            resolve();
-          } catch (err: any) {
-            setError(err.message);
-            reject(err);
-          }
-        },
-        auto_select: false,
-        cancel_on_tap_outside: false,
-      });
-      
-      gis.accounts.id.renderButton(buttonContainer, {
-        type: 'standard',
-        theme: 'outline',
-        size: 'large',
-        text: 'signin_with',
-        shape: 'rectangular',
-        logo_alignment: 'left',
-        width: 280,
-      });
-    });
+      setError(err.message);
+      throw err;
+    }
   };
 
   const logout = async () => {

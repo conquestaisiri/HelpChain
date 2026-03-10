@@ -822,7 +822,12 @@ function WalletPageContent() {
                     <SelectTrigger className="mt-2">
                       <SelectValue placeholder={banksLoading ? "Loading banks..." : "Select your bank"} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[280px] overflow-y-auto">
+                      {banks.length === 0 && banksLoading && (
+                        <div className="flex items-center gap-2 p-3 text-sm text-muted-foreground">
+                          <Loader2 className="w-4 h-4 animate-spin" /> Loading banks...
+                        </div>
+                      )}
                       {banks.map((b) => (
                         <SelectItem key={b.code} value={b.code}>{b.name}</SelectItem>
                       ))}
