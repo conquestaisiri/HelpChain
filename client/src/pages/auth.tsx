@@ -35,7 +35,8 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (user) {
-      setLocation("/profile");
+      const onboardingDone = localStorage.getItem("hc-onboarding-done");
+      setLocation(onboardingDone ? "/profile" : "/onboarding");
     }
   }, [user, setLocation]);
 
