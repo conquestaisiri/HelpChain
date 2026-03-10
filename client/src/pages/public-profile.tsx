@@ -25,13 +25,15 @@ export default function PublicProfilePage() {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", userId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", userId!)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?user_id=eq.${userId}&select=*`, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+      });
+      if (!res.ok) throw new Error("Profile not found");
+      const data = await res.json();
+      return data?.[0] || null;
     },
     enabled: !!userId,
   });
