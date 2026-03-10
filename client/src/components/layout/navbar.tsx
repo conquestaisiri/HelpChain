@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { HelpChainLogo } from "@/components/ui/helpchain-logo";
 import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { useNotifications } from "@/hooks/use-notifications";
 import { useMobileMenu } from "@/contexts/mobile-menu-context";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -16,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Menu, X, Bell, LogOut, User, MessageCircle, Search, 
   Home, Sparkles, ChevronDown, Globe, MapPin, 
-  LayoutDashboard, Wallet, ClipboardList, Settings, HelpCircle, Plus
+  LayoutDashboard, Wallet, ClipboardList, Settings, HelpCircle, Plus, Check
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";

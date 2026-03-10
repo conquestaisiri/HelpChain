@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Send, MessageCircle, ChevronLeft, Search } from "lucide-react";
-import { Redirect } from "wouter";
+import { Send, MessageCircle, ChevronLeft, Search, UserCircle } from "lucide-react";
+import { Redirect, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface MockConversation {
   id: string;
+  userId: string;
   name: string;
   avatar: string;
   lastMessage: string;
@@ -26,10 +27,10 @@ interface MockMessage {
   time: string;
 }
 
-const mockConversations: MockConversation[] = [
-  { id: "c1", name: "Sarah Chen", avatar: "https://i.pravatar.cc/150?u=sarah", lastMessage: "I can start the project tomorrow!", time: "2m ago", unread: 2 },
-  { id: "c2", name: "Emeka Nwankwo", avatar: "https://i.pravatar.cc/150?u=emeka", lastMessage: "The move is scheduled for Saturday", time: "1h ago", unread: 0 },
-  { id: "c3", name: "Priya Sharma", avatar: "https://i.pravatar.cc/150?u=priya", lastMessage: "Thanks for the great review!", time: "3h ago", unread: 0 },
+const initialConversations: MockConversation[] = [
+  { id: "c1", userId: "user-sarah-1", name: "Sarah Chen", avatar: "https://i.pravatar.cc/150?u=sarah", lastMessage: "I can start the project tomorrow!", time: "2m ago", unread: 2 },
+  { id: "c2", userId: "user-emeka-2", name: "Emeka Nwankwo", avatar: "https://i.pravatar.cc/150?u=emeka", lastMessage: "The move is scheduled for Saturday", time: "1h ago", unread: 0 },
+  { id: "c3", userId: "user-priya-3", name: "Priya Sharma", avatar: "https://i.pravatar.cc/150?u=priya", lastMessage: "Thanks for the great review!", time: "3h ago", unread: 0 },
 ];
 
 const mockMessages: Record<string, MockMessage[]> = {
@@ -56,15 +57,24 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [localMessages, setLocalMessages] = useState(mockMessages);
+  const [conversations, setConversations] = useState(initialConversations);
 
   if (!user) return <Redirect to="/auth" />;
 
-  const filteredConvs = mockConversations.filter(
+  const filteredConvs = conversations.filter(
     (c) => !searchQuery || c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const currentConv = mockConversations.find((c) => c.id === selectedConv);
+  const currentConv = conversations.find((c) => c.id === selectedConv);
   const messages = selectedConv ? localMessages[selectedConv] || [] : [];
+
+  // Clear unread when selecting a conversation
+  const handleSelectConv = (convId: string) => {
+    setSelectedConv(convId);
+    setConversations((prev) =>
+      prev.map((c) => (c.id === convId ? { ...c, unread: 0 } : c))
+    );
+  };
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +89,10 @@ export default function MessagesPage() {
       ...prev,
       [selectedConv]: [...(prev[selectedConv] || []), msg],
     }));
+    // Update last message in conversation list
+    setConversations((prev) =>
+      prev.map((c) => c.id === selectedConv ? { ...c, lastMessage: newMessage.trim(), time: "Just now" } : c)
+    );
     setNewMessage("");
   };
 
@@ -107,7 +121,7 @@ export default function MessagesPage() {
                   filteredConvs.map((conv) => (
                     <button
                       key={conv.id}
-                      onClick={() => setSelectedConv(conv.id)}
+                      onClick={() => handleSelectConv(conv.id)}
                       className={`w-full p-4 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left border-b border-border/50 ${selectedConv === conv.id ? "bg-muted" : ""}`}
                     >
                       <Avatar className="w-10 h-10">
@@ -149,7 +163,14 @@ export default function MessagesPage() {
                       <AvatarImage src={currentConv?.avatar} />
                       <AvatarFallback>{currentConv?.name?.[0]}</AvatarFallback>
                     </Avatar>
-                    <p className="font-semibold text-foreground">{currentConv?.name}</p>
+                    <div className="flex-1">
+                      <p className="font-semibold text-foreground">{currentConv?.name}</p>
+                    </div>
+                    <Link href={`/public-profile/${currentConv?.userId}`}>
+                      <Button variant="ghost" size="sm" className="gap-1.5 text-xs">
+                        <UserCircle className="w-4 h-4" /> View Profile
+                      </Button>
+                    </Link>
                   </div>
 
                   <div className="flex-1 overflow-y-auto p-4 space-y-3">
