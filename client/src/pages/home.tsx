@@ -1,612 +1,591 @@
-import { Navbar } from "@/components/layout/navbar";
-import { HelpChainLogo } from "@/components/ui/helpchain-logo";
-import { Footer } from "@/components/layout/footer";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Search, ArrowRight, Shield, Clock, Star, CheckCircle2,
-  Sparkles, Users, ChevronRight, Globe, Briefcase, Code,
-  Palette, BookOpen, Megaphone, Languages, MessageCircle,
-  Home as HomeIcon, Wrench, GraduationCap, FileText, HelpCircle, MapPin,
-  Zap, Lock, Eye, TrendingUp, Play, Package, Truck
-} from "lucide-react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState, useEffect } from "react";
+import {
+  Search, ArrowRight, Star, Shield, Clock,
+  ChevronRight, Briefcase, BarChart3,
+  Home as HomeIcon, Cpu, Paintbrush, PenLine, Package,
+  GraduationCap, Megaphone, Languages,
+  Zap, Lock, HeartHandshake,
+  Twitter, Linkedin, Instagram, Facebook,
+  ArrowUpRight
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 
-const typingPhrases = [
-  "home cleaning",
-  "graphic design",
-  "delivery help",
-  "web development",
-  "furniture moving",
-  "content writing",
-  "tutoring",
-  "repairs & fixing",
+/* ── animation preset ───────────────────────────────────── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 22 },
+  show: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.07, duration: 0.48, ease: [0.0, 0.0, 0.2, 1.0] as [number, number, number, number] },
+  }),
+};
+
+/* ── data ────────────────────────────────────────────────── */
+const typingPhrases = ["home cleaning", "logo design", "furniture moving", "web development", "content writing", "tutoring help", "delivery runs"];
+
+const categories = [
+  { label: "Home Services",  icon: HomeIcon,      desc: "Cleaning, repairs, moving" },
+  { label: "Tech Help",      icon: Cpu,           desc: "Dev, IT support, software" },
+  { label: "Design",         icon: Paintbrush,    desc: "Graphics, UI/UX, branding" },
+  { label: "Writing",        icon: PenLine,       desc: "Content, copy, editing" },
+  { label: "Delivery",       icon: Package,       desc: "Packages, errands, logistics" },
+  { label: "Education",      icon: GraduationCap, desc: "Tutoring, mentoring" },
+  { label: "Marketing",      icon: Megaphone,     desc: "Social media, SEO, ads" },
+  { label: "Translation",    icon: Languages,     desc: "Documents, localization" },
 ];
 
+const steps = [
+  { n: "01", title: "Post Your Task",  desc: "Describe what you need, set a budget, and go live in under 3 minutes." },
+  { n: "02", title: "Pick a Worker",   desc: "Browse offers from verified workers, check reviews, and choose your match." },
+  { n: "03", title: "Pay Securely",    desc: "Funds sit in escrow until you approve the work. Zero risk, every time." },
+];
+
+const sampleTasks = [
+  { cat: "Design",        title: "Design a logo for my coffee brand",      budget: "$80",  bids: 9  },
+  { cat: "Home Services", title: "Deep clean 3-bedroom apartment (Lagos)",  budget: "$45",  bids: 5  },
+  { cat: "Tech Help",     title: "Fix bug in my React web application",     budget: "$120", bids: 14 },
+  { cat: "Writing",       title: "Write 10 blog articles about fintech",    budget: "$200", bids: 6  },
+  { cat: "Delivery",      title: "Pick up and deliver groceries (Abuja)",   budget: "$15",  bids: 3  },
+  { cat: "Education",     title: "Teach my daughter GCSE Mathematics",      budget: "$60",  bids: 8  },
+];
+
+const stats = [
+  { value: "50K+", label: "Tasks Completed" },
+  { value: "120+", label: "Countries Active" },
+  { value: "4.9",  label: "Average Rating"  },
+  { value: "$2M+", label: "Paid to Workers" },
+];
+
+const trust = [
+  { icon: Lock,   title: "Escrow Protection",  desc: "Your payment is locked until you confirm the work is done." },
+  { icon: Shield, title: "Verified Workers",   desc: "Every worker goes through identity checks and skill verification." },
+  { icon: Star,   title: "Honest Reviews",     desc: "Real ratings from real clients, visible on every profile." },
+  { icon: Zap,    title: "Fast Payouts",       desc: "Workers receive earnings within 24 hours of task approval." },
+];
+
+const testimonials = [
+  { name: "Chisom A.", role: "Client — Lagos",  quote: "I needed a logo urgently and got 8 offers in under an hour. The escrow process gave me total peace of mind.", initials: "CA" },
+  { name: "David M.",  role: "Worker — Nairobi",quote: "I've been earning consistently for 6 months. Fast payouts and I've never had a payment dispute.", initials: "DM" },
+  { name: "Sandra E.", role: "Client — London", quote: "HelpChain's verification system makes all the difference. Quality workers and a trustworthy process.", initials: "SE" },
+];
+
+/* ══════════════════════════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════════════════════════ */
 export default function Home() {
   const [searchInput, setSearchInput] = useState("");
   const [, setLocation] = useLocation();
+  const { user } = useFirebaseAuth();
+
+  /* typing animation */
   const [typingText, setTypingText] = useState("");
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [phraseIdx, setPhraseIdx]   = useState(0);
+  const [deleting, setDeleting]     = useState(false);
 
   useEffect(() => {
-    const currentPhrase = typingPhrases[phraseIndex];
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (typingText.length < currentPhrase.length) {
-          setTypingText(currentPhrase.slice(0, typingText.length + 1));
-        } else {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
+    const phrase = typingPhrases[phraseIdx];
+    const t = setTimeout(() => {
+      if (!deleting) {
+        if (typingText.length < phrase.length) setTypingText(phrase.slice(0, typingText.length + 1));
+        else setTimeout(() => setDeleting(true), 1800);
       } else {
-        if (typingText.length > 0) {
-          setTypingText(typingText.slice(0, -1));
-        } else {
-          setIsDeleting(false);
-          setPhraseIndex((prev) => (prev + 1) % typingPhrases.length);
-        }
+        if (typingText.length > 0) setTypingText(typingText.slice(0, -1));
+        else { setDeleting(false); setPhraseIdx(i => (i + 1) % typingPhrases.length); }
       }
-    }, isDeleting ? 50 : 100);
-    return () => clearTimeout(timeout);
-  }, [typingText, isDeleting, phraseIndex]);
+    }, deleting ? 45 : 90);
+    return () => clearTimeout(t);
+  }, [typingText, deleting, phraseIdx]);
 
   const handleSearch = () => {
-    if (searchInput.trim()) {
-      setLocation(`/discover?query=${encodeURIComponent(searchInput)}`);
-    } else {
-      setLocation("/discover");
-    }
+    const q = searchInput.trim();
+    setLocation(q ? `/discover?query=${encodeURIComponent(q)}` : "/discover");
   };
 
-  const categories = [
-    { label: "Home Services", icon: "/images/icons/home-services.png", desc: "Cleaning, repairs, moving, assembly" },
-    { label: "Tech Help", icon: "/images/icons/tech-help.png", desc: "Development, IT support, troubleshooting" },
-    { label: "Design", icon: "/images/icons/design.png", desc: "Graphics, UI/UX, branding, video" },
-    { label: "Writing", icon: "/images/icons/writing.png", desc: "Content, copywriting, editing" },
-    { label: "Delivery", icon: "/images/icons/delivery.png", desc: "Packages, errands, logistics" },
-    { label: "Education", icon: "/images/icons/education.png", desc: "Tutoring, homework, mentoring" },
-    { label: "Marketing", icon: "/images/icons/marketing.png", desc: "Social media, SEO, campaigns" },
-    { label: "Translation", icon: "/images/icons/translation.png", desc: "Documents, websites, localization" },
-  ];
+  const navLinks = user
+    ? [{ href: "/dashboard", label: "Dashboard" }, { href: "/discover", label: "Find Tasks" }, { href: "/wallet", label: "Wallet" }, { href: "/messages", label: "Messages" }]
+    : [{ href: "/discover", label: "Find Tasks" }, { href: "/how-it-works", label: "How It Works" }, { href: "/pricing", label: "Pricing" }];
 
-  const stats = [
-    { value: "50K+", label: "Tasks Completed", icon: CheckCircle2 },
-    { value: "120+", label: "Countries", icon: Globe },
-    { value: "4.9", label: "Average Rating", icon: Star },
-    { value: "$2M+", label: "Paid to Workers", icon: TrendingUp },
-  ];
-
-  const features = [
-    { icon: Zap, title: "Post Tasks in Minutes", desc: "Describe what you need, set your budget, and get matched with skilled workers instantly.", color: "bg-primary/10 text-primary" },
-    { icon: Lock, title: "Secure Escrow Payments", desc: "Your money is held safely until the task is completed to your satisfaction. Zero risk.", color: "bg-secondary/10 text-secondary" },
-    { icon: Globe, title: "Local & Remote Services", desc: "From furniture moving in Lagos to graphic design from anywhere — we cover it all.", color: "bg-accent/10 text-accent" },
-    { icon: Shield, title: "Trusted & Verified", desc: "Every worker goes through verification. Ratings, reviews, and reputation scores you can trust.", color: "bg-chart-4/10 text-chart-4" },
-  ];
-
-  const workers = [
-    { src: "/images/worker-freelancer.jpg", name: "Priya", role: "Software Developer", location: "Mumbai, India", rating: "4.9", tasks: "127" },
-    { src: "/images/worker-handyman.jpg", name: "Carlos", role: "Home Repairs Pro", location: "Mexico City", rating: "5.0", tasks: "89" },
-    { src: "/images/worker-delivery.jpg", name: "Kelechi", role: "Courier & Logistics", location: "Lagos, Nigeria", rating: "4.8", tasks: "234" },
-    { src: "/images/worker-designer.jpg", name: "Amara", role: "Graphic Designer", location: "Accra, Ghana", rating: "5.0", tasks: "156" },
-  ];
-
-  const testimonials = [
-    {
-      name: "Maria Rodriguez",
-      role: "Freelance Designer, Mexico",
-      avatar: "https://i.pravatar.cc/150?img=32",
-      content: "HelpChain connected me with clients globally. The escrow system means I always get paid for my work. It's completely changed my freelance career.",
-      rating: 5,
-    },
-    {
-      name: "James Okonkwo",
-      role: "Business Owner, Nigeria",
-      avatar: "https://i.pravatar.cc/150?img=52",
-      content: "I found reliable help for my office move within an hour. Fast, professional, and the payment protection gives me total peace of mind.",
-      rating: 5,
-    },
-    {
-      name: "Priya Sharma",
-      role: "Software Engineer, India",
-      avatar: "https://i.pravatar.cc/150?img=26",
-      content: "As a part-time freelancer, HelpChain lets me pick up projects that match my skills perfectly. The global marketplace is a game changer!",
-      rating: 5,
-    },
-  ];
-
+  /* ── render ─────────────────────────────────────────────── */
   return (
-    <div className="min-h-screen flex flex-col bg-background font-sans">
-      <Navbar />
+    <div className="min-h-screen bg-white text-[#111]" style={{ fontFamily: "'Figtree', sans-serif" }}>
 
-      {/* ═══════════ HERO ═══════════ */}
-      <section className="relative min-h-[95vh] flex items-center overflow-hidden -mt-16">
-        {/* Background image */}
-        <div className="absolute inset-0">
-          <img src="/images/hero-background.png" alt="Diverse professionals collaborating" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/85" />
+      {/* ═══════ NAVBAR ═══════ */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/96 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+
+          {/* Logo */}
+          <Link href="/">
+            <div className="flex items-center gap-2 cursor-pointer select-none">
+              <div className="w-8 h-8 rounded-lg bg-[#0C6B38] flex items-center justify-center shrink-0">
+                <HeartHandshake className="w-4 h-4 text-white" strokeWidth={2.2} />
+              </div>
+              <span className="text-[15px] font-bold tracking-tight text-[#0C6B38]">HelpChain</span>
+            </div>
+          </Link>
+
+          {/* Center nav */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map(l => (
+              <Link key={l.href} href={l.href}>
+                <span className="text-sm font-medium text-gray-500 hover:text-[#0C6B38] transition-colors cursor-pointer">{l.label}</span>
+              </Link>
+            ))}
+          </div>
+
+          {/* Right CTAs */}
+          <div className="flex items-center gap-3">
+            {user ? (
+              <Link href="/create-request">
+                <Button className="bg-[#0C6B38] hover:bg-[#0a5a30] text-white text-sm h-9 px-5 rounded-lg font-semibold">Post a Task</Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth">
+                  <span className="hidden sm:block text-sm font-medium text-gray-500 hover:text-[#0C6B38] cursor-pointer transition-colors">Log in</span>
+                </Link>
+                <Link href="/auth?mode=signup">
+                  <Button className="bg-[#0C6B38] hover:bg-[#0a5a30] text-white text-sm h-9 px-5 rounded-lg font-semibold">Get Started</Button>
+                </Link>
+              </>
+            )}
+          </div>
+
+        </div>
+      </nav>
+
+      {/* ═══════ HERO ═══════ */}
+      <section className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto">
+
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-7"
+              style={{ background: "rgba(12,107,56,0.07)", border: "1px solid rgba(12,107,56,0.14)", color: "#0C6B38" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0C6B38] animate-pulse" />
+              600+ active tasks right now
+            </span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.55 }}
+            className="text-[2.6rem] sm:text-5xl md:text-[3.5rem] font-bold leading-[1.08] tracking-tight text-[#0D0D0D] mb-5"
+          >
+            Find Skilled Helpers<br />
+            <span style={{ color: "#0C6B38" }}>for Any Task, Anytime</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.55 }}
+            className="text-base sm:text-lg text-gray-500 mb-9 leading-relaxed"
+          >
+            Access a global network of trusted workers ready to help with{" "}
+            <span className="font-semibold" style={{ color: "#0C6B38" }}>{typingText}<span className="opacity-70">|</span></span>
+          </motion.p>
+
+          {/* Search */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24, duration: 0.55 }}
+            className="flex items-center bg-white rounded-xl overflow-hidden mb-5 max-w-lg mx-auto"
+            style={{ border: "1.5px solid #E5E7EB", boxShadow: "0 1px 8px rgba(0,0,0,0.06)" }}
+          >
+            <Search className="w-5 h-5 text-gray-400 ml-4 shrink-0" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleSearch()}
+              placeholder="Search any service..."
+              className="flex-1 px-3 py-3.5 text-sm bg-transparent outline-none placeholder-gray-400 text-gray-800"
+            />
+            <button
+              onClick={handleSearch}
+              className="text-white text-sm font-semibold px-6 py-3.5 transition-colors"
+              style={{ background: "#0C6B38" }}
+              onMouseOver={e => (e.currentTarget.style.background = "#0a5a30")}
+              onMouseOut={e => (e.currentTarget.style.background = "#0C6B38")}
+            >
+              Search
+            </button>
+          </motion.div>
+
+          {/* Popular tags */}
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.34, duration: 0.45 }}
+            className="flex flex-wrap items-center justify-center gap-2"
+          >
+            <span className="text-xs text-gray-400 font-medium">Popular:</span>
+            {["Logo Design", "Home Cleaning", "Web Dev", "Delivery", "Tutoring"].map(tag => (
+              <button
+                key={tag}
+                onClick={() => setLocation(`/discover?query=${encodeURIComponent(tag)}`)}
+                className="text-xs px-3 py-1.5 rounded-full bg-white text-gray-600 hover:text-[#0C6B38] transition-colors"
+                style={{ border: "1px solid #E5E7EB" }}
+              >
+                {tag}
+              </button>
+            ))}
+          </motion.div>
         </div>
 
-        <div className="container mx-auto px-4 md:px-8 relative z-10 pt-32 md:pt-40 pb-20">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
-              <Badge className="mb-8 px-5 py-2 bg-white/10 text-white border-white/20 rounded-full text-sm backdrop-blur-sm">
-                <HelpChainLogo size="sm" className="mr-2" />
-                Secure & Verified Helper Community
-              </Badge>
+        {/* Worker avatars */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.6 }}
+          className="mt-14 flex items-center justify-center gap-3 flex-wrap"
+        >
+          {[
+            { name: "Amaka U.",  cat: "Designer",   rating: "5.0", initials: "AU" },
+            { name: "James D.",  cat: "Developer",  rating: "4.9", initials: "JD" },
+            { name: "Fatima K.", cat: "Writer",     rating: "4.8", initials: "FK" },
+            { name: "Tobi A.",   cat: "Delivery",   rating: "5.0", initials: "TA" },
+          ].map((w, i) => (
+            <motion.div
+              key={w.name}
+              initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 + i * 0.07, duration: 0.38 }}
+              className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3"
+              style={{ border: "1px solid #F0F0F0", boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}
+            >
+              <div className="w-8 h-8 rounded-full bg-[#0C6B38] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                {w.initials}
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-800 leading-tight">{w.name}</p>
+                <p className="text-xs text-gray-400">{w.cat}</p>
+              </div>
+              <div className="flex items-center gap-0.5 ml-1">
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                <span className="text-xs font-medium text-gray-700">{w.rating}</span>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
 
-              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-6 md:mb-8 font-heading">
-                Get Help With Anything.
-                <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-green-300 to-accent">
-                  Anytime. Anywhere.
-                </span>
-              </h1>
+      {/* ═══════ STATS BAR ═══════ */}
+      <section style={{ background: "#0C6B38" }} className="py-10 px-4">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {stats.map((s, i) => (
+            <motion.div key={s.label} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i}>
+              <p className="text-3xl font-bold text-white mb-1">{s.value}</p>
+              <p className="text-sm text-white/65">{s.label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-              <p className="text-base md:text-xl text-white/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-                Post tasks, hire trusted helpers, and get things done — from{" "}
-                <span className="text-white font-medium">
-                  {typingText}
-                  <span className="animate-pulse">|</span>
-                </span>
-              </p>
+      {/* ═══════ CATEGORIES ═══════ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "#0C6B38" }}>Browse by category</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0D0D0D]">Choose your category</h2>
+          </div>
+          <Link href="/discover">
+            <span className="hidden sm:flex items-center gap-1 text-sm font-medium cursor-pointer hover:underline" style={{ color: "#0C6B38" }}>
+              View all <ChevronRight className="w-4 h-4" />
+            </span>
+          </Link>
+        </div>
 
-              {/* Search Bar */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10 max-w-2xl mx-auto">
-                <div className="relative flex-1">
-                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    placeholder="What do you need done?"
-                    className="pl-14 pr-5 h-16 text-lg rounded-2xl bg-white border-0 shadow-2xl focus:ring-4 focus:ring-accent/30"
-                  />
-                </div>
-                <Button
-                  onClick={handleSearch}
-                  size="lg"
-                  className="h-16 px-10 rounded-2xl bg-accent hover:bg-accent/90 text-accent-foreground shadow-2xl shadow-accent/30 text-lg font-semibold"
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {categories.map((cat, i) => (
+            <motion.div key={cat.label} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i}>
+              <Link href={`/discover?category=${encodeURIComponent(cat.label)}`}>
+                <div
+                  className="group cursor-pointer bg-white rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5"
+                  style={{ border: "1px solid #F0F0F0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+                  onMouseOver={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(12,107,56,0.25)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 12px rgba(12,107,56,0.08)"; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#F0F0F0"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; }}
                 >
-                  Search <ArrowRight className="ml-2 h-5 w-5" />
+                  <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 group-hover:bg-[#0C6B38]/8 group-hover:border-[#0C6B38]/20 flex items-center justify-center mb-4 transition-all">
+                    <cat.icon className="w-5 h-5 text-gray-500 group-hover:text-[#0C6B38] transition-colors" strokeWidth={1.5} />
+                  </div>
+                  <p className="font-semibold text-sm text-[#0D0D0D] mb-1">{cat.label}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed">{cat.desc}</p>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════ HOW IT WORKS ═══════ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: "#F8FAF8" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "#0C6B38" }}>Simple process</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0D0D0D] mb-3">How HelpChain works</h2>
+            <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">
+              From posting to payment — everything is simple, secure, and built for trust.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {steps.map((step, i) => (
+              <motion.div key={step.n} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i}>
+                <div className="text-center">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-5" style={{ background: "#0C6B38" }}>
+                    {step.n}
+                  </div>
+                  <h3 className="font-bold text-[#0D0D0D] mb-2">{step.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link href="/how-it-works">
+              <Button variant="outline" className="rounded-xl h-11 px-8 font-medium" style={{ borderColor: "rgba(12,107,56,0.3)", color: "#0C6B38" }}>
+                Learn more <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ BROWSE TASKS ═══════ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "#0C6B38" }}>Live marketplace</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0D0D0D]">Browse popular tasks</h2>
+          </div>
+          <Link href="/discover">
+            <span className="hidden sm:flex items-center gap-1 text-sm font-medium cursor-pointer hover:underline" style={{ color: "#0C6B38" }}>
+              See all <ChevronRight className="w-4 h-4" />
+            </span>
+          </Link>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sampleTasks.map((task, i) => (
+            <motion.div key={task.title} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i}>
+              <Link href="/discover">
+                <div
+                  className="group cursor-pointer bg-white rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5"
+                  style={{ border: "1px solid #F0F0F0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+                  onMouseOver={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(12,107,56,0.22)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 16px rgba(12,107,56,0.08)"; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#F0F0F0"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; }}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span
+                      className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                      style={{ background: "rgba(12,107,56,0.08)", border: "1px solid rgba(12,107,56,0.14)", color: "#0C6B38" }}
+                    >
+                      {task.cat}
+                    </span>
+                    <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#0C6B38] transition-colors" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-[#0D0D0D] leading-snug mb-5">{task.title}</h3>
+                  <div className="flex items-center justify-between pt-4" style={{ borderTop: "1px solid #F5F5F5" }}>
+                    <div>
+                      <p className="text-lg font-bold" style={{ color: "#0C6B38" }}>{task.budget}</p>
+                      <p className="text-xs text-gray-400">{task.bids} offers received</p>
+                    </div>
+                    <button
+                      className="text-xs font-semibold px-4 py-2 rounded-lg transition-all"
+                      style={{ background: "rgba(12,107,56,0.08)", color: "#0C6B38", border: "1px solid rgba(12,107,56,0.14)" }}
+                    >
+                      Send Offer
+                    </button>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════ TRUST ═══════ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: "#F8FAF8" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "#0C6B38" }}>Built for trust</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0D0D0D] mb-3">Why people trust HelpChain</h2>
+            <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">
+              Every feature is designed to protect both clients and workers.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {trust.map((t, i) => (
+              <motion.div key={t.title} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i}>
+                <div className="bg-white rounded-2xl p-6" style={{ border: "1px solid #F0F0F0" }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                    style={{ background: "rgba(12,107,56,0.08)", border: "1px solid rgba(12,107,56,0.14)" }}>
+                    <t.icon className="w-5 h-5" style={{ color: "#0C6B38" }} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="font-bold text-sm text-[#0D0D0D] mb-2">{t.title}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">{t.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ DUAL CTA CARDS ═══════ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-5">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <div className="rounded-3xl p-10 h-full" style={{ background: "#0C6B38" }}>
+              <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-6">
+                <Briefcase className="w-6 h-6 text-white" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">I need something done</h3>
+              <p className="text-white/65 text-sm leading-relaxed mb-8">
+                Post your task in minutes, get offers from verified workers, and only pay when the job is done to your satisfaction.
+              </p>
+              <Link href="/create-request">
+                <Button className="bg-white text-[#0C6B38] hover:bg-white/90 font-bold rounded-xl h-11 px-7">
+                  Post a Task <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-              </div>
+              </Link>
+            </div>
+          </motion.div>
 
-              {/* Quick Tags */}
-              <div className="flex flex-wrap gap-2 justify-center mb-10">
-                {["Cleaning", "Design", "Delivery", "Repairs", "Writing", "Tutoring"].map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="rounded-full px-5 py-2.5 bg-white/10 text-white border border-white/15 hover:bg-white/20 cursor-pointer transition-all backdrop-blur-sm font-normal text-sm"
-                    onClick={() => {
-                      setSearchInput(tag);
-                      setLocation(`/discover?query=${encodeURIComponent(tag)}`);
-                    }}
-                  >
-                    {tag}
-                  </Badge>
-                ))}
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}>
+            <div className="rounded-3xl p-10 h-full" style={{ background: "#0D0D0D" }}>
+              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-6">
+                <BarChart3 className="w-6 h-6 text-white" strokeWidth={1.5} />
               </div>
+              <h3 className="text-2xl font-bold text-white mb-3">I want to earn money</h3>
+              <p className="text-white/55 text-sm leading-relaxed mb-8">
+                Browse hundreds of tasks, send your best offer, complete the work, and get paid fast. Build your reputation as you grow.
+              </p>
+              <Link href="/discover">
+                <Button className="font-bold rounded-xl h-11 px-7" style={{ background: "#0C6B38" }}>
+                  Find Work <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-              {/* Hero CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/create-request">
-                  <Button size="lg" className="rounded-full px-10 py-7 text-lg bg-white text-primary hover:bg-white/95 shadow-2xl font-semibold btn-shine">
-                    Post a Task <ArrowRight className="ml-2 h-5 w-5" />
+      {/* ═══════ TESTIMONIALS ═══════ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: "#F8FAF8" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "#0C6B38" }}>Community stories</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0D0D0D]">What our users say</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {testimonials.map((t, i) => (
+              <motion.div key={t.name} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i}>
+                <div className="bg-white rounded-2xl p-6 h-full flex flex-col" style={{ border: "1px solid #F0F0F0" }}>
+                  <div className="flex mb-4">
+                    {[1,2,3,4,5].map(j => <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed flex-1 mb-5">"{t.quote}"</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-[#0C6B38] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                      {t.initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[#0D0D0D]">{t.name}</p>
+                      <p className="text-xs text-gray-400">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ FINAL CTA ═══════ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
+          <div className="rounded-3xl px-8 py-16 text-center relative overflow-hidden" style={{ background: "#0C6B38" }}>
+            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to get started?</h2>
+              <p className="text-white/65 text-sm mb-8 max-w-sm mx-auto leading-relaxed">
+                Join over 50,000 people already using HelpChain to post tasks, earn money, and get things done.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="/auth?mode=signup">
+                  <Button className="bg-white text-[#0C6B38] hover:bg-white/90 font-bold rounded-xl h-12 px-10 text-sm">
+                    Create Free Account
                   </Button>
                 </Link>
                 <Link href="/discover">
-                  <Button size="lg" variant="outline" className="rounded-full px-10 py-7 text-lg border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
+                  <Button variant="outline" className="border-white/25 text-white hover:bg-white/10 rounded-xl h-12 px-10 text-sm font-medium">
                     Browse Tasks
                   </Button>
                 </Link>
               </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" className="w-full">
-            <path d="M0 80L60 68C120 56 240 32 360 24C480 16 600 24 720 32C840 40 960 48 1080 44C1200 40 1320 24 1380 16L1440 8V80H0Z" fill="hsl(var(--background))" />
-          </svg>
-        </div>
-      </section>
-
-      {/* ═══════════ STATS ═══════════ */}
-      <section className="py-16 bg-background relative z-10 -mt-4">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                className="text-center p-6 rounded-2xl bg-card border border-border shadow-sm hover:shadow-lg transition-shadow"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <stat.icon className="w-8 h-8 text-primary mx-auto mb-3" />
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1">{stat.value}</p>
-                <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════ FEATURES ═══════════ */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <motion.div className="text-center max-w-2xl mx-auto mb-20" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <Badge className="mb-5 px-4 py-1.5 bg-primary/10 text-primary border-primary/20 rounded-full">
-              Why HelpChain
-            </Badge>
-             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
-              Everything you need to
-              <br />
-              <span className="text-gradient">get things done</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              A powerful platform built for both clients and workers, with security and trust at its core.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <Card className="h-full border-border hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group rounded-2xl">
-                  <CardContent className="p-8">
-                    <div className={`h-14 w-14 rounded-2xl ${feat.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                      <feat.icon className="h-7 w-7" />
-                    </div>
-                    <h3 className="font-bold text-lg text-foreground mb-3">{feat.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{feat.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════ CATEGORIES ═══════════ */}
-      <section className="py-24 bg-muted/30 border-y border-border">
-        <div className="container mx-auto px-4">
-          <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
-              Explore task categories
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              From local errands to remote digital work — find or post any type of task.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.map((cat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-                <Link href="/discover">
-                  <Card className="group cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full rounded-2xl border-border overflow-hidden">
-                    <CardContent className="p-5 md:p-6 text-center">
-                      <img
-                        src={cat.icon}
-                        alt={cat.label}
-                        className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 object-contain group-hover:scale-110 transition-transform"
-                        loading="lazy"
-                      />
-                      <h3 className="font-bold text-foreground mb-1 text-sm md:text-base">{cat.label}</h3>
-                      <p className="text-xs md:text-sm text-muted-foreground">{cat.desc}</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link href="/discover">
-              <Button variant="outline" size="lg" className="rounded-full px-10 group text-base">
-                View All Categories
-                <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════ WORKERS SHOWCASE ═══════════ */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <Badge className="mb-5 px-4 py-1.5 bg-secondary/10 text-secondary border-secondary/20 rounded-full">
-              <Users className="w-4 h-4 mr-2" />
-              Workers Worldwide
-            </Badge>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">Real people, real skills</h2>
-            <p className="text-lg text-muted-foreground">
-              From freelance designers to delivery pros — skilled workers from every corner of the globe.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {workers.map((worker, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <Card className="group overflow-hidden border-border hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 rounded-2xl">
-                  <div className="aspect-[4/5] overflow-hidden relative">
-                    <img
-                      src={worker.src}
-                      alt={`${worker.name} - ${worker.role}`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="font-bold text-white text-lg">{worker.name}</h4>
-                      <p className="text-white/80 text-sm font-medium">{worker.role}</p>
-                    </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin className="w-3 h-3" /> {worker.location}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 fill-chart-4 text-chart-4" />
-                        <span className="text-xs font-semibold text-foreground">{worker.rating}</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">{worker.tasks} tasks completed</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link href="/discover">
-              <Button size="lg" className="rounded-full px-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 text-base">
-                Browse All Tasks <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════ HOW IT WORKS ═══════════ */}
-      <section className="py-24 bg-muted/30 border-y border-border">
-        <div className="container mx-auto px-4">
-          <motion.div className="text-center max-w-2xl mx-auto mb-20" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <Badge className="mb-5 px-4 py-1.5 bg-accent/10 text-accent border-accent/20 rounded-full">
-              How It Works
-            </Badge>
-             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
-              Three simple steps
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Getting help has never been easier. Post, match, and pay securely.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
-            {[
-              { step: "01", title: "Post your task", desc: "Describe what you need, set your budget and deadline. It takes just 2 minutes.", icon: "/images/icons/post-task.png" },
-              { step: "02", title: "Get matched", desc: "Receive proposals from verified workers worldwide. Compare skills, ratings, and prices.", icon: "/images/icons/get-matched.png" },
-              { step: "03", title: "Pay securely", desc: "Funds are held in escrow until the task is completed to your satisfaction.", icon: "/images/icons/pay-secure.png" },
-            ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}>
-                <div className="text-center relative">
-                  {i < 2 && (
-                    <div className="hidden md:block absolute top-16 left-[60%] w-[80%] border-t-2 border-dashed border-border" />
-                  )}
-                  <div className="w-24 h-24 md:w-28 md:h-28 mx-auto mb-6 relative z-10">
-                    <img src={item.icon} alt={item.title} className="w-full h-full object-contain" loading="lazy" />
-                  </div>
-                  <span className="text-sm font-bold text-primary mb-2 block">Step {item.step}</span>
-                  <h3 className="font-bold text-lg md:text-xl mb-3 text-foreground">{item.title}</h3>
-                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xs mx-auto">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center mt-16">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/create-request">
-                <Button size="lg" className="rounded-full px-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 text-base font-semibold">
-                  Post a Task <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/discover">
-                <Button size="lg" variant="outline" className="rounded-full px-10 text-base">
-                  Find Tasks
-                </Button>
-              </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ═══════════ APP PREVIEW / SHOWCASE ═══════════ */}
-      <section className="py-24 bg-background overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <Badge className="mb-5 px-4 py-1.5 bg-secondary/10 text-secondary border-secondary/20 rounded-full">
-                Platform Preview
-              </Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground font-heading leading-tight">
-                A beautiful interface
-                <br />
-                <span className="text-gradient">built for everyone</span>
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Whether you're posting tasks or completing them, every interaction is designed to be fast, intuitive, and secure.
-              </p>
+      {/* ═══════ FOOTER ═══════ */}
+      <footer style={{ background: "#0D0D0D" }} className="px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-14">
 
-              <div className="space-y-5">
-                {[
-                  { icon: Eye, title: "Task Feed", desc: "Browse beautifully organized tasks with smart filters" },
-                  { icon: Lock, title: "Escrow Protection", desc: "Every payment is protected until work is verified" },
-                  { icon: MessageCircle, title: "Real-time Chat", desc: "Coordinate seamlessly with text, files, and images" },
-                  { icon: Star, title: "Reputation System", desc: "Build trust through ratings and verified reviews" },
-                ].map((item, i) => (
-                  <motion.div key={i} className="flex gap-4 items-start" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                    <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <item.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-0.5">{item.title}</h4>
-                      <p className="text-sm text-muted-foreground">{item.desc}</p>
-                    </div>
-                  </motion.div>
+            <div className="col-span-2">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-8 h-8 rounded-lg bg-[#0C6B38] flex items-center justify-center">
+                  <HeartHandshake className="w-4 h-4 text-white" strokeWidth={2.2} />
+                </div>
+                <span className="text-base font-bold text-white">HelpChain</span>
+              </div>
+              <p className="text-sm text-white/45 leading-relaxed max-w-xs mb-6">
+                The global task marketplace. Post tasks, find workers, pay securely with escrow protection — everywhere in the world.
+              </p>
+              <div className="flex gap-3">
+                {[Twitter, Linkedin, Instagram, Facebook].map((Icon, i) => (
+                  <a key={i} href="#" style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                    className="w-9 h-9 rounded-lg hover:bg-[#0C6B38] flex items-center justify-center text-white/45 hover:text-white transition-all">
+                    <Icon className="w-4 h-4" />
+                  </a>
                 ))}
               </div>
-            </motion.div>
-
-            <motion.div className="grid grid-cols-2 gap-4" initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <div className="space-y-4">
-                <div className="rounded-2xl overflow-hidden shadow-2xl">
-                  <img src="/images/worker-tutor.jpg" alt="Tutor helping a student" className="w-full h-52 object-cover" loading="lazy" />
-                </div>
-                <Card className="p-6 border-border shadow-lg rounded-2xl hover-lift">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-4 text-white">
-                    <Shield className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold mb-2 text-foreground">Escrow Protection</h4>
-                  <p className="text-sm text-muted-foreground">Payments held securely until task completion</p>
-                </Card>
-              </div>
-              <div className="space-y-4 pt-8">
-                <Card className="p-6 border-border shadow-lg rounded-2xl hover-lift">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center mb-4 text-white">
-                    <CheckCircle2 className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold mb-2 text-foreground">Verified Workers</h4>
-                  <p className="text-sm text-muted-foreground">Identity verification and reputation scores</p>
-                </Card>
-                <div className="rounded-2xl overflow-hidden shadow-2xl">
-                  <img src="/images/worker-delivery.jpg" alt="Delivery worker" className="w-full h-52 object-cover" loading="lazy" />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════ TESTIMONIALS ═══════════ */}
-      <section className="py-24 bg-muted/30 relative overflow-hidden border-y border-border">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/5 rounded-full translate-x-1/3 translate-y-1/3" />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-foreground font-heading">
-              What people are saying
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-              Real stories from clients and workers across the globe
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {testimonials.map((t, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}>
-                <Card className="h-full border-0 shadow-xl bg-card hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden">
-                  <CardContent className="p-8 flex flex-col h-full">
-                    <div className="flex gap-1 mb-5">
-                      {[...Array(t.rating)].map((_, j) => (
-                        <Star key={j} className="w-5 h-5 fill-chart-4 text-chart-4" />
-                      ))}
-                    </div>
-                    <p className="text-foreground mb-8 leading-relaxed flex-1">
-                      "{t.content}"
-                    </p>
-                    <div className="flex items-center gap-4 pt-6 border-t border-border">
-                      <Avatar className="w-12 h-12 ring-2 ring-primary/10">
-                        <AvatarImage src={t.avatar} />
-                        <AvatarFallback className="bg-primary/10 text-primary font-bold">{t.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold text-foreground">{t.name}</p>
-                        <p className="text-sm text-muted-foreground">{t.role}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════ CTA ═══════════ */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(145,60%,14%)] via-[hsl(145,50%,10%)] to-[hsl(145,40%,6%)]" />
-        <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px), radial-gradient(circle at 75% 75%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
-        <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-accent/15 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/20 rounded-full blur-[80px]" />
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <HelpChainLogo size="xl" className="mx-auto mb-8" />
-            <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight font-heading">
-              Start getting things done
-              <br />
-              <span className="text-white/70">today</span>
-            </h2>
-            <p className="text-lg text-white/60 mb-12 max-w-lg mx-auto leading-relaxed">
-              Join a growing community of people hiring help and earning money — from anywhere in the world.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/create-request">
-                <Button size="lg" className="rounded-full px-12 py-7 text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 font-semibold">
-                  Post a Task <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/discover">
-                <Button size="lg" variant="outline" className="rounded-full px-12 py-7 text-lg border-2 border-white/25 text-white hover:bg-white/10 font-semibold">
-                  Browse Tasks
-                </Button>
-              </Link>
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* ═══════════ EDUCATIONAL FOOTER ═══════════ */}
-      <section className="py-20 bg-background border-t border-border">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-14">
-            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3 font-heading">Learn more about HelpChain</h3>
-            <p className="text-muted-foreground">Guides to help you get the most out of the platform</p>
+            <div>
+              <p className="text-xs font-bold text-white uppercase tracking-widest mb-5">Platform</p>
+              <ul className="space-y-3">
+                {[{ l: "Find Tasks", h: "/discover" }, { l: "Post a Task", h: "/create-request" }, { l: "How It Works", h: "/how-it-works" }, { l: "Pricing", h: "/pricing" }].map(i => (
+                  <li key={i.l}><Link href={i.h}><span className="text-sm text-white/45 hover:text-white transition-colors cursor-pointer">{i.l}</span></Link></li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold text-white uppercase tracking-widest mb-5">Company</p>
+              <ul className="space-y-3">
+                {[{ l: "About Us", h: "/about" }, { l: "Blog", h: "/blog" }, { l: "Careers", h: "/careers" }, { l: "Press", h: "/press" }].map(i => (
+                  <li key={i.l}><Link href={i.h}><span className="text-sm text-white/45 hover:text-white transition-colors cursor-pointer">{i.l}</span></Link></li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold text-white uppercase tracking-widest mb-5">Support</p>
+              <ul className="space-y-3">
+                {[{ l: "Help Center", h: "/help" }, { l: "Trust & Safety", h: "/safety" }, { l: "Contact Us", h: "/contact" }, { l: "Privacy Policy", h: "/privacy" }, { l: "Terms", h: "/terms" }].map(i => (
+                  <li key={i.l}><Link href={i.h}><span className="text-sm text-white/45 hover:text-white transition-colors cursor-pointer">{i.l}</span></Link></li>
+                ))}
+              </ul>
+            </div>
+
           </div>
-          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[
-              { title: "How Payments Work", icon: Briefcase, desc: "Understanding deposits, withdrawals, and fees" },
-              { title: "What Is Escrow", icon: Shield, desc: "How your money stays protected" },
-              { title: "Withdrawing Earnings", icon: ArrowRight, desc: "Bank and crypto withdrawal options" },
-              { title: "Trust & Safety", icon: CheckCircle2, desc: "Verification, ratings, and dispute resolution" },
-              { title: "Blockchain Security", icon: Lock, desc: "How blockchain protects your transactions" },
-            ].map((guide, i) => (
-              <Link key={i} href="/help">
-                <Card className="group cursor-pointer hover:shadow-lg hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 h-full rounded-2xl">
-                  <CardContent className="p-6">
-                    <guide.icon className="w-8 h-8 text-primary mb-4" />
-                    <h4 className="font-bold text-sm text-foreground mb-1">{guide.title}</h4>
-                    <p className="text-xs text-muted-foreground">{guide.desc}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+            <p className="text-xs text-white/25">© {new Date().getFullYear()} HelpChain. All rights reserved.</p>
+            <div className="flex items-center gap-1.5 text-xs text-white/25">
+              <Shield className="w-3.5 h-3.5 text-[#0C6B38]" />
+              <span>Escrow-protected payments on every transaction</span>
+            </div>
           </div>
         </div>
-      </section>
+      </footer>
 
-      <Footer />
     </div>
   );
 }
