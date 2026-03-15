@@ -159,7 +159,22 @@ export default function Home() {
       </nav>
 
       {/* ═══════ HERO ═══════ */}
-      <section className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* Full-width background wrapper with gradient mesh */}
+      <div className="relative overflow-hidden" style={{ background: "linear-gradient(175deg, rgba(12,107,56,0.055) 0%, rgba(12,107,56,0.018) 38%, #ffffff 62%)" }}>
+
+        {/* Blurred orb — top right */}
+        <div className="pointer-events-none absolute" style={{ top: "-120px", right: "-80px", width: "700px", height: "700px", borderRadius: "50%", background: "radial-gradient(circle, rgba(12,107,56,0.13) 0%, transparent 68%)", filter: "blur(60px)", zIndex: 0 }} />
+
+        {/* Blurred orb — bottom left */}
+        <div className="pointer-events-none absolute" style={{ bottom: "80px", left: "-100px", width: "480px", height: "480px", borderRadius: "50%", background: "radial-gradient(circle, rgba(12,107,56,0.08) 0%, transparent 70%)", filter: "blur(80px)", zIndex: 0 }} />
+
+        {/* Dot grid pattern */}
+        <div className="pointer-events-none absolute inset-0" style={{ zIndex: 0, backgroundImage: "radial-gradient(circle, rgba(12,107,56,0.18) 1px, transparent 1px)", backgroundSize: "28px 28px", opacity: 0.35 }} />
+
+        {/* Top radial spotlight */}
+        <div className="pointer-events-none absolute" style={{ top: 0, left: "50%", transform: "translateX(-50%)", width: "900px", height: "360px", background: "radial-gradient(ellipse at center top, rgba(12,107,56,0.09) 0%, transparent 65%)", zIndex: 0 }} />
+
+      <section className="relative z-10 pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto">
 
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
@@ -231,63 +246,35 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Worker profile cards */}
+        {/* Worker profile cards — real photos */}
         <motion.div
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.6 }}
-          className="mt-14 flex items-center justify-center gap-4 flex-wrap"
+          className="mt-14 flex items-center justify-center gap-3 flex-wrap"
         >
           {[
-            { name: "Amaka U.",  cat: "UI Designer",    rating: "5.0", jobs: 142, img: "https://i.pravatar.cc/80?img=47", badge: "Top Rated" },
-            { name: "James D.",  cat: "Web Developer",  rating: "4.9", jobs: 98,  img: "https://i.pravatar.cc/80?img=12", badge: "Pro"       },
-            { name: "Fatima K.", cat: "Copywriter",     rating: "4.8", jobs: 73,  img: "https://i.pravatar.cc/80?img=28", badge: null        },
-            { name: "Tobi A.",   cat: "Delivery Agent", rating: "5.0", jobs: 210, img: "https://i.pravatar.cc/80?img=33", badge: "Top Rated" },
+            { name: "Amaka U.",  cat: "Designer",   rating: "5.0", img: "https://i.pravatar.cc/40?img=47" },
+            { name: "James D.",  cat: "Developer",  rating: "4.9", img: "https://i.pravatar.cc/40?img=12" },
+            { name: "Fatima K.", cat: "Writer",     rating: "4.8", img: "https://i.pravatar.cc/40?img=28" },
+            { name: "Tobi A.",   cat: "Delivery",   rating: "5.0", img: "https://i.pravatar.cc/40?img=33" },
           ].map((w, i) => (
             <motion.div
               key={w.name}
-              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + i * 0.08, duration: 0.4 }}
-              className="group relative bg-white rounded-2xl px-4 pt-4 pb-3.5 cursor-pointer transition-all hover:-translate-y-0.5"
-              style={{
-                border: "1px solid #EEEEEE",
-                boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-                minWidth: "160px",
-              }}
+              initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 + i * 0.07, duration: 0.38 }}
+              className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3"
+              style={{ border: "1px solid #F0F0F0", boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}
             >
-              {/* Online dot */}
-              <div className="relative w-fit mx-auto mb-3">
-                <img
-                  src={w.img}
-                  alt={w.name}
-                  className="w-14 h-14 rounded-2xl object-cover shadow-md"
-                />
-                <span
-                  className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white"
-                  style={{ background: "#0C6B38" }}
-                />
+              <img
+                src={w.img}
+                alt={w.name}
+                className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm shrink-0"
+              />
+              <div>
+                <p className="text-xs font-semibold text-gray-800 leading-tight">{w.name}</p>
+                <p className="text-xs text-gray-400">{w.cat}</p>
               </div>
-
-              {/* Badge */}
-              {w.badge && (
-                <div
-                  className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
-                  style={{ background: "linear-gradient(135deg, #0C6B38, #0a5a30)" }}
-                >
-                  {w.badge}
-                </div>
-              )}
-
-              {/* Info */}
-              <div className="text-center">
-                <p className="text-sm font-bold text-[#0D0D0D] leading-tight">{w.name}</p>
-                <p className="text-xs text-gray-400 mt-0.5 mb-2">{w.cat}</p>
-
-                <div className="flex items-center justify-center gap-2">
-                  <span className="flex items-center gap-0.5">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span className="text-xs font-semibold text-[#0D0D0D]">{w.rating}</span>
-                  </span>
-                  <span className="text-gray-200">·</span>
-                  <span className="text-xs text-gray-400">{w.jobs} tasks</span>
-                </div>
+              <div className="flex items-center gap-0.5 ml-1">
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                <span className="text-xs font-medium text-gray-700">{w.rating}</span>
               </div>
             </motion.div>
           ))}
@@ -324,6 +311,7 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
+      </div>{/* end hero background wrapper */}
 
       {/* ═══════ STATS BAR ═══════ */}
       <section style={{ background: "#0C6B38" }} className="py-10 px-4">
